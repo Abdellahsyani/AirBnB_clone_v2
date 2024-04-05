@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #create a lot of thing that let me dizzy
 #devops is confusing me
-
 sudo apt update
 sudo apt install nginx -y
 
