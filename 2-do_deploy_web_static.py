@@ -1,45 +1,30 @@
 #!/usr/bin/python3
-# create a fabric script that disrbuit
+"""
+Fabric script based on the file 1-pack_web_static.py that distributes an
+archive to the web servers
+"""
 
-from fabric.api import env, put, run, local, runs_once, task
-from datetime import datetime
+from fabric.api import put, run, env
 from os.path import exists
-
-env.hosts = ['18.207.112.142', '100.25.110.244']
-
-@runs_once
-def do_pack():
-    """pack the files in web_static folder"""
-    path = 'versions'
-    local('mkdir -p {}'.format(path))
-    date = datetime.now().strftime('%Y%m%d%H%M%S')
-    path += '/web_static_{}.tgz'.format(date)
-    cmd = local('tar -cvzf {} web_static/'.format(path))
-    return path if cmd.succeeded else None
+env.hosts = ['54.89.109.87', '100.25.190.21']
 
 
-@task
 def do_deploy(archive_path):
-    """distribute an archive to web servers"""
-    if not (archive_path and exists(archive_path)):
+    """distributes an archive to the web servers"""
+    if exists(archive_path) is False:
         return False
-    path = put(archive_path, '/tmp/')
-    if path.failed:
+    try:
+        file_n = archive_path.split("/")[-1]
+        no_ext = file_n.split(".")[0]
+        path = "/data/web_static/releases/"
+        put(archive_path, '/tmp/')
+        run('mkdir -p {}{}/'.format(path, no_ext))
+        run('tar -xzf /tmp/{} -C {}{}/'.format(file_n, path, no_ext))
+        run('rm /tmp/{}'.format(file_n))
+        run('mv {0}{1}/web_static/* {0}{1}/'.format(path, no_ext))
+        run('rm -rf {}{}/web_static'.format(path, no_ext))
+        run('rm -rf /data/web_static/current')
+        run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
+        return True
+    except:
         return False
-    outdir = '/data/web_static/releases/'
-    link = '/data/web_static/current'
-    outdir += path[0].split('/')[-1].split('.')[0]
-    if run('mkdir -p {}'.format(outdir)).failed:
-        return False
-    if run('tar -xzf {} --directory {}'.format(path[0], outdir)).failed:
-        return False
-    if run('rm -rf {}'.format(path[0])).failed:
-        return False
-    if run('rm -rf {}'.format(link)).failed:
-        return False
-    if run('ln -sf {} {}'.format(outdir, link)).failed:
-        return False
-    if run('mv -n ' + outdir + '/web_static/* ' + outdir).failed:
-        return False
-    print('New version deployed!\n')
-    return True
