@@ -41,7 +41,7 @@ def python(text="is cool"):
 def number(n):
     """method to print number"""
     if isinstance(n, int):
-        return f"{n} is a number"
+        return "{:d} is a number".format(n)
 
 
 if __name__ == "__main__":
