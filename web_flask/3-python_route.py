@@ -29,6 +29,7 @@ def text(text):
 
 
 @app.route("/python/<text>")
+@app.route("/python")
 def python(text="is cool"):
     """the python method"""
     if '_' in text:
