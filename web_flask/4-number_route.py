@@ -37,11 +37,10 @@ def python(text="is cool"):
     return f"Python {text}"
 
 
-@app.route("/number/<n>")
+@app.route("/number/<int:n>")
 def number(n):
     """method to print number"""
-    if isinstance(n, int):
-        return "{:d} is a number".format(n)
+    return "{:d} is a number".format(n)
 
 
 if __name__ == "__main__":
