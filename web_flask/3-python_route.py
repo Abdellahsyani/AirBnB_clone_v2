@@ -21,7 +21,7 @@ def hbnb():
 
 
 @app.route("/c/<text>")
-def text(text="is cool"):
+def text(text):
     """text method"""
     if '_' in text:
         text = text.replace('_', ' ')
