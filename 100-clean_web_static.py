@@ -6,7 +6,7 @@ import os
 
 # must be added to work as expected but checked refuse
 # versions = os.listdir("versions/")
-env.hosts = ['54.165.77.224', '100.24.242.177']
+env.hosts = ['54.87.157.134', '100.27.4.84']
 
 
 def do_clean(number=0):
